@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
+import React from 'react'
+import { StyleSheet, Text, SafeAreaView } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 function Header(props) {
