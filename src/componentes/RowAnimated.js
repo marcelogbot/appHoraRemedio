@@ -8,6 +8,7 @@ import {LogBox} from "react-native";
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
 "ColorPropType will be removed",
+"ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'."
 ])
 
 class RowAnimated extends Component {
