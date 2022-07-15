@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Hora do Remedio",
+    "slug": "horaRemedio2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/iconAppCtrlRem.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splashCtrlRem.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1E5E93"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/iconAppCtrlRemNot.png",
+          "color": "#1E5E93",
+          "sounds": [
+            "./assets/Blues_Infusion.mp3"
+          ]
+        }
+      ]
+    ],
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1E5E93"
+      },
+      "package": "com.marcunb.horaRemedio2"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
