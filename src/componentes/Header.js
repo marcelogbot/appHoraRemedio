@@ -1,14 +1,14 @@
 import React from 'react'
-import { StyleSheet, Text, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 function Header(props) {
   return (
-    <SafeAreaView style = {styles.headerView}>
+    <View style = {styles.headerView}>
         <MaterialCommunityIcons name = {props.iconEsq} size = {30} style = {styles.iconEsq} onPress = {props.onPressEsq} />
         <Text style = {styles.textHeader} >{props.title}</Text>
         <MaterialCommunityIcons name = {props.iconDir} size = {30} style = {styles.iconDir} onPress = {props.onPressDir} />
-    </SafeAreaView>
+    </View>
   )
 };
 
