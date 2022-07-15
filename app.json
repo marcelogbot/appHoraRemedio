@@ -18,7 +18,7 @@
           "icon": "./assets/iconAppCtrlRemNot.png",
           "color": "#1E5E93",
           "sounds": [
-            "./assets/Blues_Infusion.mp3"
+            "./assets/blues_infusion.mp3"
           ]
         }
       ]
