@@ -461,15 +461,7 @@ function Cad_Med(props) {
             </View>
 
           </View>
-          <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => salvarMedicamento()}
-              style={[{flexDirection:'row',backgroundColor:'#123',
-                                justifyContent:'center', alignItems:'center', padding:5, elevation:0,
-                                position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
-                <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
-                <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar medicamento</Text>
-          </TouchableOpacity>
+          
         </ScrollView>
         <Modal
           visible={salvando}
@@ -487,6 +479,16 @@ function Cad_Med(props) {
               </View>
             </View>
         </Modal>
+
+        <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => salvarMedicamento()}
+              style={[{flexDirection:'row',backgroundColor:'#123',
+                                justifyContent:'center', alignItems:'center', padding:5, elevation:0,
+                                position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
+                <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
+                <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar medicamento</Text>
+          </TouchableOpacity>
       
       </View>
   )
