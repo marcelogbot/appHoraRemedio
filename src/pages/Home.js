@@ -451,7 +451,7 @@ function Home(props) {
     />
     <TouchableOpacity style={{position:'absolute', backgroundColor:'#123456', height:60, width:60, borderRadius:30, bottom:60, right:20, padding:15, alignItems:'center', elevation:4 }}
                       onPress = {() => props.navigation.navigate('Cadastro')}>
-      <MaterialCommunityIcons name={'plus'} color={'#dddddd'} size={30}/>
+      <MaterialCommunityIcons name={'plus'} color={'#dddddd'} size={30} />
     </TouchableOpacity>
     <TouchableOpacity style = {{backgroundColor:'#dddddd', justifyContent:'center', alignItems:'center', flexDirection:'row', padding:3}}
           onPress = {() => confirmClearAll()}>

@@ -444,7 +444,7 @@ function Alt_Med(props) {
   return (
     <View style = {styles.conteiner}>
       <Header title = {'Alterar Medicamento'} iconEsq={'chevron-left'} colorEsq={'#cccccc'} onPressEsq={() => props.navigation.navigate('Detalhes',{key:medicamento.id})}
-                iconDir={'trash-can-outline'} colorDir={'#FF231F7C'} onPressDir={() => confirmExcluirRegistro()}/>
+                iconDir={'trash-can-outline'} colorDir={'#fe4545'} onPressDir={() => confirmExcluirRegistro()}/>
       
       <ScrollView keyboardDismissMode = 'on-drag'>
         <View  style = {{alignItems:'center',marginTop:5}}>
@@ -554,10 +554,10 @@ function Alt_Med(props) {
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => alterarMedicamento()}
-            style={[{flexDirection:'row',backgroundColor:'#123',
+            style={[{flexDirection:'row',backgroundColor:'#875502',
                               justifyContent:'center', alignItems:'center', padding:10, elevation:0,
                               position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
-              <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
+              <MaterialCommunityIcons name={'file-document-edit-outline'} color={'#dddddd'} size={24}/>
               <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar alteração</Text>
         </TouchableOpacity>
 
