@@ -114,7 +114,7 @@ function Det_Med(props) {
   
   return (
     <View style = {[styles.viewStyle]}>
-      <Header title = {'Detalhes'} iconEsq={'chevron-left'} onPressEsq={() => props.navigation.goBack()} />
+      <Header title = {'Detalhes'} iconEsq={'chevron-left'} colorEsq={'#cccccc'} onPressEsq={() => props.navigation.goBack()} />
       
       <View style={{justifyContent:'center', alignItems:'center', padding:5}}>
 
@@ -214,7 +214,7 @@ function Det_Med(props) {
                           return (
                               <View style={{marginBottom:4}}>
                                   <Text style={{fontWeight:'bold'}}>Dose: {item.id} - Ok</Text>
-                                  <Text style={{fontSize:16, color:'#333333'}}>Previsto: {moment(item.alarme).format('HH:mm [-] DD/MM/YYYY')}</Text>
+                                  <Text style={{fontSize:16, color:'#333333'}}>Previsto: {moment(item.dataLembrete).format('HH:mm [-] DD/MM/YYYY')}</Text>
                                   <Text style={{fontSize:18, color:'#123456'}}>Tomei: {moment(item.dataConcluido).format('HH:mm [-] DD/MM/YYYY')}</Text>
                               </View>
                           )
@@ -222,7 +222,7 @@ function Det_Med(props) {
                           return (
                               <View style={{marginBottom:4}}>
                                   <Text style={{fontWeight:'bold'}}>Dose: {item.id}</Text>
-                                  <Text style={{fontSize:16, color:'#333333'}}>Previsto: {moment(item.alarme).format('HH:mm [-] DD/MM/YYYY')}</Text>
+                                  <Text style={{fontSize:16, color:'#333333'}}>Previsto: {moment(item.dataLembrete).format('HH:mm [-] DD/MM/YYYY')}</Text>
                                   <Text style={{fontSize:18, color:'#D27305', fontStyle:'italic'}}>Ainda não tomei</Text>
                               </View>
                           )

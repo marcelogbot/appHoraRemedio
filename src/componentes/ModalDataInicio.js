@@ -14,18 +14,15 @@ class ModalDataInicio extends React.PureComponent {
 
             showPicker:false,
             modePicker:'',
-
          };
 
          this.selectDiaSemana = [{id:'0',nome:'Dom.'},{id:'1',nome:'Seg.'},
                                     {id:'2',nome:'Ter.'},{id:'3',nome:'Qua.'},
                                     {id:'4',nome:'Qui.'},{id:'5',nome:'Sex.'}, 
                                     {id:'6',nome:'Sab.'}];
-         
     };
 
     componentDidMount() {
-        this.setState({showPicker:false});
 
     };
 
@@ -39,8 +36,7 @@ class ModalDataInicio extends React.PureComponent {
 
     selectDate = (event,dateChoose) => {
         const selectedDate = dateChoose;   
-        t
-        his.setState({
+        this.setState({
             selectedDate:selectedDate,
             modePicker:'',
             showPicker:false,

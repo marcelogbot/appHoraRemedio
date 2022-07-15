@@ -87,6 +87,7 @@ function Cad_Med(props) {
     frequenciaTratamento.diaSemana = refFreqTratamento.current.state.diaSemana; 
     frequenciaTratamento.horarios = refFreqTratamento.current.state.horarios;
 
+    //fecha modais
     refFreqTratamento.current.state.personalizar = false;
     setShowModalFT(false)
 
@@ -130,25 +131,16 @@ function Cad_Med(props) {
   };
 
   async function gerarLembretes() {
-
-    setLembretes([]);
-
     let tempoTotal = 0;
 
     if(tempoTratamento.tratamentoContinuo) {
       tempoTotal=1;
-
-      console.log('tratamento contínuo!')
     } else if (tempoTratamento.medidaTempo == 'semana(s)') {
       tempoTotal = tempoTratamento.num * 7;
-      console.log('tratamento em semanas!')
-
     } else {
       tempoTotal = tempoTratamento.num;
-      console.log('tratamento em dias!'+ tempoTratamento.medidaTempo)
-
     };
-
+    
     let freqHoras = 0;
     let qtdAlarmes = 0;
 
@@ -156,22 +148,18 @@ function Cad_Med(props) {
       case 'h':
         qtdAlarmes = (tempoTotal*24)/frequenciaTratamento.num;
         freqHoras = frequenciaTratamento.num;
-        console.log('frequencia em horas!')
         break;
       case 'd':
         qtdAlarmes = tempoTotal/frequenciaTratamento.num;
         freqHoras = frequenciaTratamento.num*24;
-        console.log('frequencia em dias!')
         break;
       case 's':
         qtdAlarmes = tempoTotal/(frequenciaTratamento.num*7);
         freqHoras = frequenciaTratamento.num*(24*7);
-        console.log('frequencia em semanas!')
         break;
       case 'm':
         freqHoras = 0 //repetir o mesmo dia de início a cada mês 
         qtdAlarmes = tempoTotal/(frequenciaTratamento.num*30);
-        console.log('frequencia em meses!')
         break;
     };
 
@@ -189,7 +177,7 @@ function Cad_Med(props) {
       });
 
       const lembrete1 = {id:id, 
-                        dataLembrete:dataLembrete, 
+                        dataLembrete:new Date(dataLembrete), 
                         concluido:false,
                         dataConcluido:'', 
                         idNotificacao:notificationId};
@@ -241,6 +229,7 @@ function Cad_Med(props) {
 
         if (frequenciaTratamento.medidaTempo.id == 's') {
           const dataSemana = new Date(dataLembrete)
+          
           //lista dias da semana
           for (let s=0 ; s<7;s++) {
             dataSemana.setHours(dataSemana.getHours()+24,dataSemana.getMinutes(),0,0);
@@ -255,7 +244,6 @@ function Cad_Med(props) {
                             });
               id++;
             };
-            
           };
           dataLembrete.setHours(dataLembrete.getHours()+n,dataLembrete.getMinutes(),0,0);
         } else {
@@ -368,7 +356,8 @@ function Cad_Med(props) {
 
     <View style={styles.conteiner}>
         <Header title = {'Novo Medicamento'} 
-          iconEsq={'chevron-left'} 
+          iconEsq={'chevron-left'}
+          colorEsq={'#cccccc'}
           onPressEsq={() => props.navigation.goBack()}
         />
         
@@ -400,7 +389,6 @@ function Cad_Med(props) {
             >
               <Text style = {styles.btnOK} onPress={() => tempoTratamentoSelected()}> Ok </Text> 
             </ModalTempoTratamento>
-        
 
             <View style = {styles.separador} />
 
@@ -473,7 +461,7 @@ function Cad_Med(props) {
               <View style={{alignItems:'center', justifyContent:'center',
                           width:'50%', height:'20%', backgroundColor:'#eeeeee',
                           alignSelf:'center', borderRadius:20, elevation:10, top:'30%', padding:10}}>
-                <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Salvando os dados do tratamento, aguarde...</Text>
+                <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Salvando os dados do medicamento, aguarde...</Text>
                 <View style={{alignItems:'center', justifyContent:'center'}}>
                   <LottieView style={{height:70, width:70}} source={require('../assets-comp/lottie/waiting.json')} autoPlay loop />
                 </View>
@@ -482,14 +470,14 @@ function Cad_Med(props) {
         </Modal>
 
         <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => salvarMedicamento()}
-              style={[{flexDirection:'row',backgroundColor:'#123',
-                                justifyContent:'center', alignItems:'center', padding:10, elevation:0,
-                                position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
-                <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
-                <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar medicamento</Text>
-          </TouchableOpacity>
+            activeOpacity={0.7}
+            onPress={() => salvarMedicamento()}
+            style={[{flexDirection:'row',backgroundColor:'#123',
+                              justifyContent:'center', alignItems:'center', padding:10, elevation:0,
+                              position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
+              <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
+              <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar medicamento</Text>
+        </TouchableOpacity>
       
       </View>
   )

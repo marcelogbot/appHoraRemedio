@@ -122,8 +122,8 @@ function Home(props) {
        
         if(isConcluir){
           
-          if(lembretesUpdate[idLembreteAtual-1].notification_id != '' && lembretesUpdate[idLembreteAtual-1].notification_id != null) {
-            let id_notification = lembretesUpdate[idLembreteAtual-1].notification_id
+          if(lembretesUpdate[idLembreteAtual-1].idNotificacao != '' && lembretesUpdate[idLembreteAtual-1].idNotificacao != null) {
+            let id_notification = lembretesUpdate[idLembreteAtual-1].idNotificacao
             await Notifications.cancelScheduledNotificationAsync(id_notification);
           }
 
@@ -132,7 +132,7 @@ function Home(props) {
                                 dataLembrete: dataLembreteAtual,
                                 concluido:isConcluir,
                                 dataConcluido:new Date(),
-                                notification_id: '',
+                                idNotificacao: '',
                               }
   
           lembretesUpdate[idLembreteAtual-1] = lembreteUpdated
@@ -266,7 +266,7 @@ function Home(props) {
                                                       dataLembrete:dataLembreteAtual,
                                                       concluido:isConcluir,
                                                       dataConcluido:'',
-                                                      notification_id: notificationId,
+                                                      idNotificacao: notificationId,
                                                     };
 
           } else {
@@ -276,7 +276,7 @@ function Home(props) {
                                                       dataLembrete:dataLembreteAtual,
                                                       concluido:isConcluir,
                                                       dataConcluido:'',
-                                                      notification_id: '',
+                                                      idNotificacao: '',
                                                     };
           };
           
