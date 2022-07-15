@@ -372,7 +372,7 @@ function Cad_Med(props) {
           iconEsq={'chevron-left'} 
           onPressEsq={() => props.navigation.goBack()}
         />
-        {/*}
+        
         <ScrollView keyboardDismissMode = 'on-drag'>
         
           <View  style = {{alignItems:'center',marginTop:5}}>
@@ -487,7 +487,7 @@ function Cad_Med(props) {
               </View>
             </View>
         </Modal>
-        */}
+      
       </View>
   )
 };
