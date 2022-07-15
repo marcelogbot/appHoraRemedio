@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, Modal, StyleSheet, Text, TouchableOpacity, FlatList} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import {View, Modal, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 
@@ -26,7 +25,7 @@ class ModalDataInicio extends React.PureComponent {
     };
 
     componentDidMount() {
-        moment.locale('pt')
+        this.setState({showPicker:false});
 
     };
 
@@ -40,7 +39,8 @@ class ModalDataInicio extends React.PureComponent {
 
     selectDate = (event,dateChoose) => {
         const selectedDate = dateChoose;   
-        this.setState({
+        t
+        his.setState({
             selectedDate:selectedDate,
             modePicker:'',
             showPicker:false,

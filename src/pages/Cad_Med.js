@@ -119,7 +119,6 @@ function Cad_Med(props) {
     let diaSemana = refDataInicio.current.state.diaSemana.nome
     setDataInicio(new Date(dataInicioStr))  
 
-    moment.locale('pt')
     setLabelDataInicio(diaSemana+' '+moment(new Date(dataInicioStr)).format('DD/MMM/YYYY [às] HH:mm'));
     setShowModalDI(false);
 
@@ -373,6 +372,7 @@ function Cad_Med(props) {
           onPressEsq={() => props.navigation.goBack()}
         />
         
+      
         <ScrollView keyboardDismissMode = 'on-drag'>
         
           <View  style = {{alignItems:'center',marginTop:5}}>
@@ -400,6 +400,7 @@ function Cad_Med(props) {
             >
               <Text style = {styles.btnOK} onPress={() => tempoTratamentoSelected()}> Ok </Text> 
             </ModalTempoTratamento>
+        
 
             <View style = {styles.separador} />
 
@@ -484,7 +485,7 @@ function Cad_Med(props) {
               activeOpacity={0.7}
               onPress={() => salvarMedicamento()}
               style={[{flexDirection:'row',backgroundColor:'#123',
-                                justifyContent:'center', alignItems:'center', padding:5, elevation:0,
+                                justifyContent:'center', alignItems:'center', padding:10, elevation:0,
                                 position:'absolute',bottom:0, width:'100%', zIndex:1, flexDirection:'row', alignItems:'center'}]}>
                 <MaterialCommunityIcons name={'file-document-outline'} color={'#dddddd'} size={24}/>
                 <Text numberOfLines={1} style = {{fontSize:22, color:'#dddddd'}} >{' '}Salvar medicamento</Text>
