@@ -190,6 +190,7 @@ function Cad_Med(props) {
       for (let j =0; j < frequenciaTratamento.horarios.length;j++) {
 
         dataLembrete.setHours(frequenciaTratamento.horarios[j].hora,frequenciaTratamento.horarios[j].min,0,0);
+        
         if (j==0) {
 
           const notificationId = await Notifications.scheduleNotificationAsync({
@@ -333,7 +334,6 @@ function Cad_Med(props) {
           "Erro: " + e
         )
       } 
-      console.log('Salvando o medicamento:\n'+JSON.stringify(medicamento));
       setSalvando(false);
       props.navigation.goBack()
     };
@@ -342,6 +342,7 @@ function Cad_Med(props) {
 
   useEffect(() => {
     setId('@'+moment(new Date).format('YYYYMMDDHHmmss'))
+    
     //Configurando notificações
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {

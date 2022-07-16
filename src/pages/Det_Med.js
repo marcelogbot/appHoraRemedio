@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react'
-import {View, Text , StyleSheet, Alert, ScrollView, Modal, TextInput, Pressable, Dimensions, FlatList, TouchableOpacity} from 'react-native'
+import {View, Text , StyleSheet, Alert, ScrollView, Modal, TextInput, Pressable, Dimensions, TouchableOpacity} from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Header from '../componentes/Header'
 import moment from 'moment'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
-import  {GestureDetector, Gesture, GestureHandlerRootView} from 'react-native-gesture-handler'
+import  {GestureDetector, Gesture, GestureHandlerRootView, FlatList} from 'react-native-gesture-handler'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -191,7 +191,7 @@ function Det_Med(props) {
             <Text style={styles.buttonHistoricoText}>Ver histórico de lembretes</Text>
       </Pressable>
 
-      <GestureHandlerRootView style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+      <GestureHandlerRootView style={{flex:1, justifyContent:'center', alignItems:'center'}}>
         <GestureDetector gesture={gesture}>
           <Animated.View style={[{padding:10, height: SCREEN_HEIGHT*0.9, width:'95%',
                                   backgroundColor:'#dddddd', borderTopLeftRadius:10, borderTopRightRadius:10, position:'absolute',
@@ -208,6 +208,7 @@ function Det_Med(props) {
               <FlatList
                   style={{padding:5, margin:5, marginBottom:10}}
                   data={medicamento.lembretes}
+                  contentContainerStyle={{flexGrow: 1}}
                   renderItem = {({item}) => {
                       if (item.concluido) {
                           return (
