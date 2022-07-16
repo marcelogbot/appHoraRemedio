@@ -21,416 +21,417 @@ Notifications.setNotificationHandler({
 
 function Home(props) {
 
-    //Dados cadastro de notificação
-    const [expoPushToken, setExpoPushToken] = useState('');
-    const [notification, setNotification] = useState(false);
-    const notificationListener = useRef();
-    const responseListener = useRef();
+  //Dados cadastro de notificação
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
-    //Dados lembretes medicamentos
-    const [medicamentos,setMedicamentos] = useState([]);
-    const [filtro,setFiltro] = useState('');
-    const [loading, setIsLoading] = useState(false);
-    const [menuDir,setMenuDir] = useState('normal');
-    const [menuEsq,setMenuEsq] = useState('bold');
-    const [selectedDir,setSelectedDir] = useState(false);
-    const [selectedEsq,setSelectedEsq] = useState(true);
+  //Dados lembretes medicamentos
+  const [medicamentos,setMedicamentos] = useState([]);
+  const [filtro,setFiltro] = useState('');
+  const [loading, setIsLoading] = useState(false);
+  const [menuDir,setMenuDir] = useState('normal');
+  const [menuEsq,setMenuEsq] = useState('bold');
+  const [selectedDir,setSelectedDir] = useState(false);
+  const [selectedEsq,setSelectedEsq] = useState(true);
 
-    const menuChange = (menu) => {
-    
-        if (menu == 'menuEsq') {
-            setMenuDir('bold');
-            setMenuEsq('normal');
-            setSelectedEsq(true);
-            setSelectedDir(false);
-
-        } else {
-            setMenuDir('normal');
-            setMenuEsq('bold');
-            setSelectedEsq(false);
-            setSelectedDir(true);
-
-        };
-
-        setFiltro('');
-    };
-
-    const confirmClearAll = () => {
-        Alert.alert(
-            "Limpar Registros",
-            "Tem certeza que deseja apagar todos os medicamentos? ",
-            [{
-            text: 'Cancelar',
-            style:'cancel',
-            },
-            {
-            text:'Tenho certeza!',
-            onPress: () => clearAll()},]
-        )
-    };
-
-    const clearAll = async () => {
-        try {
-          await AsyncStorage.clear()
-          await Notifications.cancelAllScheduledNotificationsAsync()
-          loadData()
-        } catch(e) {
-          // clear error
-        }
-    };
-    
-    async function loadData() {
-        
-      setIsLoading(true);
-
-        try {
-          let keys = [];
-          keys = await AsyncStorage.getAllKeys();
-          console.log('Total de Chaves = '+ keys.length);
-          let values;
-          values = await AsyncStorage.multiGet(keys);
-          console.log('Total de Dados = '+ values.length);
-          let sortMed = []
-          for (let i=0; i<values.length; i++) {
-            sortMed.push(JSON.parse(values[i][1]))
-          };
-          sortMed.sort((a,b) => {
-            return a.nome - b.nome
-          });
-
-          setMedicamentos(sortMed);
-    
-        } catch (e) {
-          //read key error
-          setIsLoading(false);
-          Alert.alert(
-            "Erro ao recuperar chaves",
-            "Erro: " + e
-          )
-        };
-        setIsLoading(false);
-    };
-
-    const concluirTask = async (medicamento,isConcluir,idLembrete) => {
-
-      const idLembreteAtual = idLembrete;
-      const dadosMedAtualizado = medicamento;
-      const lembretesUpdate = medicamento.lembretes;
-      const dataLembreteAtual = new Date(lembretesUpdate[idLembrete-1].dataLembrete);
-
-      try {
-       
-        if(isConcluir){
-          
-          if(lembretesUpdate[idLembreteAtual-1].idNotificacao != '' && lembretesUpdate[idLembreteAtual-1].idNotificacao != null) {
-            let id_notification = lembretesUpdate[idLembreteAtual-1].idNotificacao
-            await Notifications.cancelScheduledNotificationAsync(id_notification);
-          }
-
-          const lembreteUpdated =   {
-                                id: idLembreteAtual,
-                                dataLembrete: dataLembreteAtual,
-                                concluido:isConcluir,
-                                dataConcluido:new Date(),
-                                idNotificacao: '',
-                              }
+  const menuChange = (menu) => {
   
-          lembretesUpdate[idLembreteAtual-1] = lembreteUpdated
-  
-        //Em caso de Tratamento Contínuo (Rodar script para gerar novo lembrete)
-          if (lembretesUpdate.length == idLembreteAtual && dadosMedAtualizado.duracao.tratamentoContinuo) {
-
-            if (dadosMedAtualizado.frequencia.horarios.length == 0) {
-
-              let tempoTotal = 1;
-              let freqHoras = 0;
-              let qtdAlarmes = 0;
-
-              switch (dadosMedAtualizado.frequencia.medidaTempo.id) {
-                case 'h':
-                  qtdAlarmes = (tempoTotal*24)/dadosMedAtualizado.frequencia.num;
-                  freqHoras = dadosMedAtualizado.frequencia.num;
-                  console.log('frequencia em horas!')
-                  break;
-                case 'd':
-                  qtdAlarmes = tempoTotal/dadosMedAtualizado.frequencia.num;
-                  freqHoras = dadosMedAtualizado.frequencia.num*24;
-                  console.log('frequencia em dias!')
-                  break;
-                case 's':
-                  qtdAlarmes = tempoTotal/(dadosMedAtualizado.frequencia.num*7);
-                  freqHoras = dadosMedAtualizado.frequencia.num*(24*7);
-                  console.log('frequencia em semanas!')
-                  break;
-                case 'm':
-                  freqHoras = 0 //repetir o mesmo dia de início a cada mês 
-                  qtdAlarmes = tempoTotal/(dadosMedAtualizado.frequencia.num*30);
-                  console.log('frequencia em meses!')
-                  break;
-              };
-
-              const dataNovoLembrete = new Date(dataLembreteAtual);
-              dataNovoLembrete.setHours(dataNovoLembrete.getHours()+freqHoras,dataNovoLembrete.getMinutes(),0,0)
-                         
-              const notificationId = await Notifications.scheduleNotificationAsync({
-                content: {
-                  title: 'Hora do remédio!',
-                  body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataNovoLembrete).format('HH:mm [-] DD/MM/YY'),
-                },
-                trigger: {date: new Date(dataNovoLembrete)},
-              });
-              let novoId = idLembreteAtual+1
-              lembretesUpdate.push({id:novoId, 
-                                dataLembrete:dataNovoLembrete, 
-                                concluido:false,
-                                dataConcluido:'', 
-                                idNotificacao:notificationId});
-        
-                                
-              
-            } //Caso tenha horários específicos e for tratamento contínuo 
-            else {
-              
-              for (let j =0; j < dadosMedAtualizado.frequencia.horarios.length;j++) {
-        
-                const dataNovoLembrete = new Date(dataLembreteAtual);
-                dataNovoLembrete.setHours(dadosMedAtualizado.frequencia.horarios[j].hora,dadosMedAtualizado.frequencia.horarios[j].min,0,0);
-                let novoId = idLembreteAtual+1
-
-                if (j==0) {
-        
-                  const notificationId = await Notifications.scheduleNotificationAsync({
-                    content: {
-                      title: 'Hora do remédio!',
-                      body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataNovoLembrete).format('HH:mm [-] DD/MM/YY'),
-                    },
-                    trigger: {date: new Date(dataNovoLembrete)},
-        
-                  });
-                  lembretesUpdate.push({id:novoId,
-                                  dataLembrete:new Date(dataNovoLembrete),
-                                  concluido:false,
-                                  dataConcluido:'',
-                                  idNotificacao:notificationId});
-        
-                } else {
-                  lembretesUpdate.push({id:novoId,
-                                  dataLembrete:new Date(dataNovoLembrete),
-                                  concluido:false,
-                                  dataConcluido:'',
-                                  idNotificacao:''});
-                  };
-              };
-            };
-            dadosMedAtualizado.lembretes = lembretesUpdate
-  
-          } else {
-
-            const dataProximoLembrete = new Date(lembretesUpdate[idLembreteAtual].dataLembrete)
-            const notificationId = await Notifications.scheduleNotificationAsync({
-              content: {
-                title: 'Hora do remédio!',
-                body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataProximoLembrete).format('HH:mm [-] DD/MM/YY'),
-              },
-              trigger: {date: new Date(dataProximoLembrete)},
-  
-            });
-            lembretesUpdate[idLembreteAtual] = {id:idLembreteAtual+1,
-                            dataLembrete:new Date(dataProximoLembrete),
-                            concluido:false,
-                            dataConcluido:'',
-                            idNotificacao:notificationId};
-            
-            dadosMedAtualizado.lembretes = lembretesUpdate
-            
-          }
-          const mergeStorage = JSON.stringify(dadosMedAtualizado)
-          await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage)
-          console.log('Lembrete Concluído com sucesso!')
-          
-        } //Em caso de reativar ou 'desconcluir' um lembrete 
-        else {
-         // console.log('Desconcluir Lembrete:\n '+JSON.stringify(lembretesUpdate[idLembrete-1]))
-          if(dataLembreteAtual > new Date()) {
-
-            const notificationId = await Notifications.scheduleNotificationAsync({
-              content: {
-                          title: 'Hora do remédio!',
-                          body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataLembreteAtual).format('HH:mm [-] DD/MM/YY'),
-                        },
-                          trigger: {date:new Date(dataLembreteAtual)},
-            });
-
-            lembretesUpdate[idLembreteAtual-1] =   {
-                                                      id: idLembreteAtual,
-                                                      dataLembrete:dataLembreteAtual,
-                                                      concluido:isConcluir,
-                                                      dataConcluido:'',
-                                                      idNotificacao: notificationId,
-                                                    };
-
-          } else {
-            
-            lembretesUpdate[idLembreteAtual-1] =   {
-                                                      id: idLembreteAtual,
-                                                      dataLembrete:dataLembreteAtual,
-                                                      concluido:isConcluir,
-                                                      dataConcluido:'',
-                                                      idNotificacao: '',
-                                                    };
-          };
-          
-          dadosMedAtualizado.lembretes = lembretesUpdate
-  
-          const mergeStorage = JSON.stringify(dadosMedAtualizado)
-          await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage )
-          console.log('Lembrete desconcluido com sucesso!')
-          
-        };
-        loadData()
-      } catch (e) {
-        Alert.alert(
-          "Erro ao concluir ou reativar lembrete!",
-          "Erro: " + e
-        );
-      };
-    };
-
-    const SemLembrete = () => {
-        if (medicamentos.length == 0) {
-          return (
-            <View style = {{alignItems:'center',justifyContent:'center', backgroundColor:'#222222', borderRadius:15, width:'90%',alignSelf:'center', top:10, elevation:5}}>
-              <Text style = {{padding:20,fontSize:30, color:'#dddddd', textAlign:'center'}}>Você não tem lembretes</Text>
-              <Text style = {{padding:20,fontSize:20, color:'#dddddd', textAlign:'center'}}>Aqui serão listados seus lembretes cadastrados!</Text>
-            </View>
-            )
-        } else {
-          return null
-        }
-    };
-
-    const renderData = ({item,index}) => {
-
-      const medicamento = item;
-      const lembretesProximos = medicamento.lembretes.filter(lembrete => lembrete.concluido == false);
-      const lembretesConcluidos = medicamento.lembretes.filter(lembrete => lembrete.concluido == true);
-      console.log('Lembretes próximos: '+lembretesProximos.length+'\nLembretes concluídos: '+lembretesConcluidos.length);
-
-      if (selectedEsq && lembretesProximos.length > 0) {
-
-        const proximoLembrete = lembretesProximos.shift();
-        const dataPL = new Date(proximoLembrete.dataLembrete);
-        const labelDataPL = moment(dataPL).format('HH:mm [-] DD/MM/YY');
-
-        return (
-          
-          <RowAnimated onCheck={() => concluirTask(medicamento,true,proximoLembrete.id)}
-                      onPressCard={() => props.navigation.navigate('Detalhes',{key:medicamento.id})}
-                      handleLeft={() => concluirTask(medicamento,true,proximoLembrete.id)}>
-            <View>
-              <Text numberOfLines={1} style = {{fontSize:22,color:'#222222'}} >{medicamento.nome}</Text>
-                  <Text numberOfLines={1} style = {{fontSize:14, color:dataPL <= new Date()?'#D33103':'#222222', fontWeight:'bold'}} >Próximo as: {labelDataPL} - {medicamento.duracao.tratamentoContinuo ? 'Contínuo': (lembretesConcluidos.length+1) + ' de ' + medicamento.lembretes.length } </Text>
-            </View>
-          </RowAnimated>
-          
-        );
-
-      } else if (selectedDir && medicamento.id == filtro && lembretesConcluidos.length > 0) {
-
-        console.log('concluidos')
-        
-        return (
-          <View>
-            <TouchableOpacity  style = {{backgroundColor:'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
-              activeOpacity={0.8}
-              onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
-              <MaterialCommunityIcons name={'chevron-down'} size={20} style = {{width:'5%', marginLeft:15}}/>
-              <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
-              <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
-            </TouchableOpacity>
-                  
-            <FlatList
-              style={{marginBottom:5}}
-              data={lembretesConcluidos}
-              onRefresh = {() => loadData()}
-              refreshing = {loading}
-              keyExtractor={(item,index) => item.id}
-              renderItem={({ item , index}) => { 
-                  
-                return (
-                    <View style = {styles.cardStyleConcluido}>
-                      <MaterialCommunityIcons name={'check-circle'} size={30} style = {{width:'10%',left:5}} onPress = {() => concluirTask(medicamento,false,item.id)} />
-                      <TouchableOpacity style = {{marginLeft:10,width:'90%'}}
-                        activeOpacity={0.8} >
-                          <Text numberOfLines={1} style = {{fontSize:20}} >{item.id} - Tomei em:</Text>
-                          <Text numberOfLines={1} style = {{fontSize:18,fontStyle:'italic', fontWeight:'bold'}} >{moment(item.dataConcluido).format('DD/MM/YYYY [às] HH:mm')}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-              }}
-            />
-          </View>
-        );
-
-        } else {
-
-          if (selectedEsq) {
-
-            return null
-    
-          } else {
-
-            return (
-              <View>
-              <TouchableOpacity  style = {{backgroundColor:'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
-                  activeOpacity={0.8}
-                  onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
-                    <MaterialCommunityIcons name={'chevron-right'} size={20} style = {{width:'5%', marginLeft:15}}/>
-                    <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
-                    <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          };
-        };
-      };
-    
-      useEffect(() => { 
-
-      //Configurando notificações
-      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-      });
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response);
-      });
-     
-      return () => {
-        Notifications.removeNotificationSubscription(notificationListener.current);
-        Notifications.removeNotificationSubscription(responseListener.current);
-      };
-    
-      },[])
-    
-      useFocusEffect(
-        React.useCallback(() => {
-
-        loadData();
-        setMenuDir('bold');
-        setMenuEsq('normal');
-        setSelectedEsq(true);
-        setSelectedDir(false);
-    
-        return () => {
+      if (menu == 'menuEsq') {
           setMenuDir('bold');
           setMenuEsq('normal');
           setSelectedEsq(true);
           setSelectedDir(false);
-    
+
+      } else {
+          setMenuDir('normal');
+          setMenuEsq('bold');
+          setSelectedEsq(false);
+          setSelectedDir(true);
+
+      };
+
+      setFiltro('');
+  };
+
+  const confirmClearAll = () => {
+      Alert.alert(
+          "Limpar Registros",
+          "Tem certeza que deseja apagar todos os medicamentos? ",
+          [{
+          text: 'Cancelar',
+          style:'cancel',
+          },
+          {
+          text:'Tenho certeza!',
+          onPress: () => clearAll()},]
+      )
+  };
+
+  const clearAll = async () => {
+      try {
+        await AsyncStorage.clear()
+        await Notifications.cancelAllScheduledNotificationsAsync()
+        loadData()
+      } catch(e) {
+        // clear error
+      }
+  };
+  
+  async function loadData() {
+      
+    setIsLoading(true);
+
+      try {
+        let keys = [];
+        keys = await AsyncStorage.getAllKeys();
+        console.log('Total de Chaves = '+ keys.length);
+        let values;
+        values = await AsyncStorage.multiGet(keys);
+        console.log('Total de Dados = '+ values.length);
+        let sortMed = []
+        for (let i=0; i<values.length; i++) {
+          sortMed.push(JSON.parse(values[i][1]))
         };
-        }, [])
-    );
+        sortMed.sort((a,b) => {
+          return a.nome - b.nome
+        });
+
+        setMedicamentos(sortMed);
+  
+      } catch (e) {
+        //read key error
+        setIsLoading(false);
+        Alert.alert(
+          "Erro ao recuperar chaves",
+          "Erro: " + e
+        )
+      };
+      setIsLoading(false);
+  };
+
+  const concluirTask = async (medicamento,isConcluir,idLembrete) => {
+
+    const idLembreteAtual = idLembrete;
+    const dadosMedAtualizado = medicamento;
+    const lembretesUpdate = medicamento.lembretes;
+    const dataLembreteAtual = new Date(lembretesUpdate[idLembrete-1].dataLembrete);
+
+    try {
+      
+      //Se a ação for de concluir entra no IF
+      if(isConcluir){
+        
+        //Cancela notificação caso ainda esteja agendada
+        if(lembretesUpdate[idLembreteAtual-1].idNotificacao != '' && dataLembreteAtual > new Date()) {
+          let idNotificacao = lembretesUpdate[idLembreteAtual-1].idNotificacao
+          await Notifications.cancelScheduledNotificationAsync(idNotificacao);
+        };
+
+        //Atualiza registro do lembrete para concluído
+        lembretesUpdate[idLembreteAtual-1] = {
+                              id: idLembreteAtual,
+                              dataLembrete: new Date(dataLembreteAtual),
+                              concluido:isConcluir,
+                              dataConcluido:new Date(),
+                              idNotificacao: '',
+                            };
+
+        //Em caso de Tratamento Contínuo e não ter próximo lembrete criado, Rodar script para gerar novo lembrete
+        if (lembretesUpdate.length == idLembreteAtual && dadosMedAtualizado.duracao.tratamentoContinuo) {
+
+          //gerando novo lembrete caso não tenha horários específicos definidos
+          if (dadosMedAtualizado.frequencia.horarios.length == 0) {
+
+            let freqHoras = 0;
+
+            switch (dadosMedAtualizado.frequencia.medidaTempo.id) {
+              case 'h':
+                freqHoras = dadosMedAtualizado.frequencia.num;
+                console.log('frequencia em horas!')
+                break;
+              case 'd':
+                freqHoras = dadosMedAtualizado.frequencia.num*24;
+                console.log('frequencia em dias!')
+                break;
+              case 's':
+                freqHoras = dadosMedAtualizado.frequencia.num*(24*7);
+                console.log('frequencia em semanas!')
+                break;
+              case 'm':
+                freqHoras = 0 //repetir o mesmo dia de início a cada mês 
+                console.log('frequencia em meses!')
+                break;
+            };
+
+            const dataNovoLembrete = new Date(dataLembreteAtual);
+            dataNovoLembrete.setHours(dataNovoLembrete.getHours()+freqHoras,dataNovoLembrete.getMinutes(),0,0)
+                        
+            const notificationId = await Notifications.scheduleNotificationAsync({
+              content: {
+                title: 'Hora do remédio!',
+                body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataNovoLembrete).format('HH:mm [-] DD/MM/YY'),
+              },
+              trigger: {date: new Date(dataNovoLembrete)},
+            });
+            let novoId = idLembreteAtual+1
+            lembretesUpdate.push({id:novoId, 
+                                  dataLembrete:new Date(dataNovoLembrete), 
+                                  concluido:false,
+                                  dataConcluido:'', 
+                                  idNotificacao:notificationId
+                                });
+            
+          } //Caso tenha horários específicos e for tratamento contínuo 
+          else if (dadosMedAtualizado.frequencia.horarios.length > 0) {
+            
+            for (let j =0; j < dadosMedAtualizado.frequencia.horarios.length; j++) {
+      
+              const dataNovoLembrete = new Date(dataLembreteAtual);
+              dataNovoLembrete.setHours(dadosMedAtualizado.frequencia.horarios[j].hora,dadosMedAtualizado.frequencia.horarios[j].min,0,0);
+              let novoId = idLembreteAtual+1
+
+              if (j==0) {
+
+                const notificationId = await Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: 'Hora do remédio!',
+                    body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataNovoLembrete).format('HH:mm [-] DD/MM/YY'),
+                  },
+                  trigger: {date: new Date(dataNovoLembrete)},
+      
+                });
+                lembretesUpdate.push({id:novoId,
+                                dataLembrete:new Date(dataNovoLembrete),
+                                concluido:false,
+                                dataConcluido:'',
+                                idNotificacao:notificationId});
+      
+              } else {
+                lembretesUpdate.push({id:novoId,
+                                dataLembrete:new Date(dataNovoLembrete),
+                                concluido:false,
+                                dataConcluido:'',
+                                idNotificacao:''});
+              };
+              novoId++
+            };
+          };
+          dadosMedAtualizado.lembretes = lembretesUpdate
+
+        } //Caso já tenha o próximo lembrete já criado, cria só a notificação
+        else {
+
+          const dataProximoLembrete = new Date(lembretesUpdate[idLembreteAtual].dataLembrete)
+          const notificationId = await Notifications.scheduleNotificationAsync({
+            content: {
+              title: 'Hora do remédio!',
+              body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataProximoLembrete).format('HH:mm [-] DD/MM/YY'),
+            },
+            trigger: {date: new Date(dataProximoLembrete)},
+
+          });
+          lembretesUpdate[idLembreteAtual] = {id:idLembreteAtual+1,
+                                              dataLembrete:new Date(dataProximoLembrete),
+                                              concluido:false,
+                                              dataConcluido:'',
+                                              idNotificacao:notificationId
+                                            };
+          
+          dadosMedAtualizado.lembretes = lembretesUpdate
+          
+        };
+        //Prepara e atualiza registro no storage
+        const mergeStorage = JSON.stringify(dadosMedAtualizado)
+        await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage)
+        console.log('Lembrete Concluído com sucesso!')
+
+      } //Em caso de reativar ou 'desconcluir' um lembrete 
+      else {
+        // se a data do lembrente for maior que a data atual, cria uma nova notificação
+        if(dataLembreteAtual > new Date()) {
+
+          const notificationId = await Notifications.scheduleNotificationAsync({
+            content: {
+                        title: 'Hora do remédio!',
+                        body: 'Tomar o ' + dadosMedAtualizado.nome.trim() + ' às ' + moment(dataLembreteAtual).format('HH:mm [-] DD/MM/YY'),
+                      },
+                        trigger: {date:new Date(dataLembreteAtual)},
+          });
+
+          lembretesUpdate[idLembreteAtual-1] =   {
+                                                    id: idLembreteAtual,
+                                                    dataLembrete:new Date(dataLembreteAtual),
+                                                    concluido:isConcluir,
+                                                    dataConcluido:'',
+                                                    idNotificacao: notificationId,
+                                                  };
+
+        } else {
+          
+          lembretesUpdate[idLembreteAtual-1] =   {
+                                                    id: idLembreteAtual,
+                                                    dataLembrete:new Date(dataLembreteAtual),
+                                                    concluido:isConcluir,
+                                                    dataConcluido:'',
+                                                    idNotificacao: '',
+                                                  };
+        };
+        
+        dadosMedAtualizado.lembretes = lembretesUpdate
+
+        const mergeStorage = JSON.stringify(dadosMedAtualizado)
+        await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage )
+        console.log('Lembrete desconcluido com sucesso!')
+      
+      };
+
+      loadData();
+      
+    } catch (e) {
+      Alert.alert(
+        "Erro ao concluir ou reativar lembrete!",
+        "Erro: " + e
+      );
+    };
+  };
+
+  const SemLembrete = () => {
+      if (medicamentos.length == 0) {
+        return (
+          <View style = {{alignItems:'center',justifyContent:'center', backgroundColor:'#222222', borderRadius:15, width:'90%',alignSelf:'center', top:10, elevation:5}}>
+            <Text style = {{padding:20,fontSize:30, color:'#dddddd', textAlign:'center'}}>Você não tem lembretes</Text>
+            <Text style = {{padding:20,fontSize:20, color:'#dddddd', textAlign:'center'}}>Aqui serão listados seus lembretes cadastrados!</Text>
+          </View>
+          )
+      } else {
+        return null
+      }
+  };
+
+  const renderData = ({item,index}) => {
+
+    const medicamento = item;
+    const lembretesProximos = medicamento.lembretes.filter(lembrete => lembrete.concluido == false);
+    const lembretesConcluidos = medicamento.lembretes.filter(lembrete => lembrete.concluido == true);
+    console.log('Lembretes próximos: '+lembretesProximos.length+'\nLembretes concluídos: '+lembretesConcluidos.length);
+
+    if (selectedEsq && lembretesProximos.length > 0) {
+
+      const proximoLembrete = lembretesProximos.shift();
+      const dataPL = new Date(proximoLembrete.dataLembrete);
+      const labelDataPL = moment(dataPL).format('HH:mm [-] DD/MM/YY');
+
+      return (
+        
+        <RowAnimated onCheck={() => concluirTask(medicamento,true,proximoLembrete.id)}
+                    onPressCard={() => props.navigation.navigate('Detalhes',{key:medicamento.id})}
+                    handleLeft={() => concluirTask(medicamento,true,proximoLembrete.id)}>
+          <View>
+            <Text numberOfLines={1} style = {{fontSize:22,color:'#222222'}} >{medicamento.nome}</Text>
+                <Text numberOfLines={1} style = {{fontSize:14, color:dataPL <= new Date()?'#D33103':'#222222', fontWeight:'bold'}} >Próximo as: {labelDataPL} - {medicamento.duracao.tratamentoContinuo ? 'Contínuo': (lembretesConcluidos.length+1) + ' de ' + medicamento.lembretes.length } </Text>
+          </View>
+        </RowAnimated>
+        
+      );
+
+    } else if (selectedDir && medicamento.id == filtro && lembretesConcluidos.length > 0) {
+
+      console.log('concluidos')
+      
+      return (
+        <View>
+          <TouchableOpacity  style = {{backgroundColor:'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
+            activeOpacity={0.8}
+            onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
+            <MaterialCommunityIcons name={'chevron-down'} size={20} style = {{width:'5%', marginLeft:15}}/>
+            <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
+            <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
+          </TouchableOpacity>
+                
+          <FlatList
+            style={{marginBottom:5}}
+            data={lembretesConcluidos}
+            onRefresh = {() => loadData()}
+            refreshing = {loading}
+            keyExtractor={(item,index) => item.id}
+            renderItem={({ item , index}) => { 
+                
+              return (
+                  <View style = {styles.cardStyleConcluido}>
+                    <MaterialCommunityIcons name={'check-circle'} size={30} style = {{width:'10%',left:5}} onPress = {() => concluirTask(medicamento,false,item.id)} />
+                    <TouchableOpacity style = {{marginLeft:10,width:'90%'}}
+                      activeOpacity={0.8} >
+                        <Text numberOfLines={1} style = {{fontSize:20}} >{item.id} - Tomei em:</Text>
+                        <Text numberOfLines={1} style = {{fontSize:18,fontStyle:'italic', fontWeight:'bold'}} >{moment(item.dataConcluido).format('DD/MM/YYYY [às] HH:mm')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+            }}
+          />
+        </View>
+      );
+
+      } else {
+
+        if (selectedEsq) {
+
+          return null
+  
+        } else {
+
+          return (
+            <View>
+            <TouchableOpacity  style = {{backgroundColor:'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
+                activeOpacity={0.8}
+                onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
+                  <MaterialCommunityIcons name={'chevron-right'} size={20} style = {{width:'5%', marginLeft:15}}/>
+                  <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
+                  <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        };
+      };
+    };
+  
+  useEffect(() => { 
+
+  //Configurando notificações
+  registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    setNotification(notification);
+  });
+  responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+    console.log(response);
+  });
+  
+  return () => {
+    Notifications.removeNotificationSubscription(notificationListener.current);
+    Notifications.removeNotificationSubscription(responseListener.current);
+  };
+
+  },[])
+  
+  useFocusEffect(
+      React.useCallback(() => {
+
+      loadData();
+      setMenuDir('bold');
+      setMenuEsq('normal');
+      setSelectedEsq(true);
+      setSelectedDir(false);
+  
+      return () => {
+        setMenuDir('bold');
+        setMenuEsq('normal');
+        setSelectedEsq(true);
+        setSelectedDir(false);
+  
+      };
+      }, [])
+  );
 
   return (
     <SafeAreaView style = {styles.viewStyle}>

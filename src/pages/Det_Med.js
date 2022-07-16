@@ -54,7 +54,7 @@ function Det_Med(props) {
         "Erro ao Salvar",
         "Erro: " + e
       )
-    }
+    };
     setShowModalEditAnotacao(false)
   };
 
@@ -93,12 +93,12 @@ function Det_Med(props) {
       return {
         height: heightButton.value,
       }
-    })
+    });
 
   useEffect(() => {
     getItem();
-    translateY.value=800
-    heightButton.value=50
+    translateY.value=800;
+    heightButton.value=50;
 
   },[]);
 
@@ -150,53 +150,55 @@ function Det_Med(props) {
         transparent={true}
         animationType={'fade'}
         onRequestClose = {() => setShowModalEditAnotacao(false)}
-        
         >
-          <View style={{flex:1, backgroundColor:'rgba(256,256,256,0.7)', justifyContent:'center'}}>
-            <View style={{position:'absolute', alignSelf:'center', backgroundColor:'#eeeeee', width:'98%', bottom:0,
-                          borderTopLeftRadius:10, borderTopRightRadius:10}}
-            >
-              <View style={{padding:10}}>
-                <TextInput style = {{backgroundColor:'#fffefe', padding:10, borderRadius:4, height:300, 
-                                      textAlign:'left', textAlignVertical:'top', fontSize:18}}
-                placeholder='Inclua suas anotações.'
-                multiline = {true}
-                value={anotacaoUpdate}
-                maxLength={120}
-                onChangeText = {(text) => setAnotacaoUpdate(text)}
-                clearButtonMode="while-editing"
-                scrollEnabled={true}
-                ref={textInputAnotacaoRef}
-                autoFocus={true}
-                />
-              </View>
-              <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'baseline'}}>
-                <Pressable style={[{backgroundColor:'#D64E31'},styles.button]}
-                          onPress={() => setShowModalEditAnotacao(false)}>
-                  <Text style={{color:'#eeeeee', fontWeight:'bold', fontSize:20}}>Cancelar</Text>
-                </Pressable>
-                <Pressable style={[{backgroundColor:'#123456'},styles.button]}
-                                  onPress={() => updateAnotacao()}>
-                  <Text style={{color:'#eeeeee', fontWeight:'bold', fontSize:20}}>Salvar</Text>
-                </Pressable>
-              </View>
+
+        <View style={{flex:1, backgroundColor:'rgba(256,256,256,0.7)', justifyContent:'center'}}>
+          <View style={{position:'absolute', alignSelf:'center', backgroundColor:'#eeeeee', width:'98%', bottom:0,
+                        borderTopLeftRadius:10, borderTopRightRadius:10}}
+          >
+            <View style={{padding:10}}>
+              <TextInput style = {{backgroundColor:'#fffefe', padding:10, borderRadius:4, height:300, 
+                                    textAlign:'left', textAlignVertical:'top', fontSize:18}}
+              placeholder='Inclua suas anotações.'
+              multiline = {true}
+              value={anotacaoUpdate}
+              maxLength={120}
+              onChangeText = {(text) => setAnotacaoUpdate(text)}
+              clearButtonMode="while-editing"
+              scrollEnabled={true}
+              ref={textInputAnotacaoRef}
+              autoFocus={true}
+              />
+            </View>
+            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'baseline'}}>
+              <Pressable style={[{backgroundColor:'#D64E31'},styles.button]}
+                        onPress={() => setShowModalEditAnotacao(false)}>
+                <Text style={{color:'#eeeeee', fontWeight:'bold', fontSize:20}}>Cancelar</Text>
+              </Pressable>
+              <Pressable style={[{backgroundColor:'#123456'},styles.button]}
+                                onPress={() => updateAnotacao()}>
+                <Text style={{color:'#eeeeee', fontWeight:'bold', fontSize:20}}>Salvar</Text>
+              </Pressable>
             </View>
           </View>
-        </Modal>
+        </View>
+        
+      </Modal>
 
-        <Pressable
-              style={[styles.buttonHistorico,{backgroundColor:'#123456'}]}
-              onPress={() => mostraHistorico()}>
-              <Text style={styles.buttonHistoricoText}>Ver histórico de lembretes</Text>
-        </Pressable>
+      <Pressable
+            style={[styles.buttonHistorico,{backgroundColor:'#123456'}]}
+            onPress={() => mostraHistorico()}>
+            <Text style={styles.buttonHistoricoText}>Ver histórico de lembretes</Text>
+      </Pressable>
 
       <GestureHandlerRootView style={{flex:1,justifyContent:'center', alignItems:'center'}}>
         <GestureDetector gesture={gesture}>
           <Animated.View style={[{padding:10, height: SCREEN_HEIGHT*0.9, width:'95%',
-                      backgroundColor:'#dddddd', borderTopLeftRadius:10, borderTopRightRadius:10, position:'absolute',
-                      bottom:SCREEN_HEIGHT/SCREEN_HEIGHT, justifyContent:'center', elevation:10,
-                      zIndex:1},
-                      rBottomSheetStyle]}>
+                                  backgroundColor:'#dddddd', borderTopLeftRadius:10, borderTopRightRadius:10, position:'absolute',
+                                  bottom:SCREEN_HEIGHT/SCREEN_HEIGHT, justifyContent:'center', elevation:10,
+                                  zIndex:1},
+                                  rBottomSheetStyle]}
+          >
         
               <View style={{width:'100%', justifyContent:'center', alignItems:'center'}}>
                   <View style={{backgroundColor:'#444444', margin:8 ,height:5, width:60, borderRadius:15}}/>
@@ -205,9 +207,6 @@ function Det_Med(props) {
               </View>
               <FlatList
                   style={{padding:5, margin:5, marginBottom:10}}
-                  contentContainerStyle={{
-                      flexGrow: 1,
-                      }}
                   data={medicamento.lembretes}
                   renderItem = {({item}) => {
                       if (item.concluido) {
