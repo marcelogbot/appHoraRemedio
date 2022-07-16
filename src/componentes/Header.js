@@ -5,9 +5,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 function Header(props) {
   return (
     <View style = {styles.headerView}>
-        <MaterialCommunityIcons name = {props.iconEsq} size = {30} style = {styles.iconEsq} color={props.colorEsq} onPress = {props.onPressEsq} />
+        <MaterialCommunityIcons name = {props.iconEsq} size = {28} style = {styles.iconEsq} color={props.colorEsq} onPress = {props.onPressEsq} />
         <Text style = {styles.textHeader} >{props.title}</Text>
-        <MaterialCommunityIcons name = {props.iconDir} size = {30} style = {styles.iconDir} color={props.colorDir} onPress = {props.onPressDir} />
+        <MaterialCommunityIcons name = {props.iconDir} size = {28} style = {styles.iconDir} color={props.colorDir} onPress = {props.onPressDir} />
     </View>
   )
 };

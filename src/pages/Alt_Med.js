@@ -112,6 +112,11 @@ function Alt_Med(props) {
 
   };
 
+  function limparDataInicio() {
+    setLabelDataInicio(LABEL_DATA_INICO);
+    medicamento.dataInicio = null;
+  };
+
   async function gerarLembretes() {
     let tempoTotal = 0;
 
@@ -200,11 +205,10 @@ function Alt_Med(props) {
           }
       };
     };
-    console.log('Primeiro lembrete!')
 
+    console.log('Primeiro lembrete!')
     //Gerando os lembretes seguintes
     if (medicamento.frequencia.horarios.length == 0 && medicamento.frequencia.medidaTempo.id != 'm' && !medicamento.duracao.tratamentoContinuo) {
-      console.log('Lembrete por repetição!')
 
       for (let i = 1 ; i <= qtdAlarmes ; i++) {
         let n = parseInt(freqHoras)
@@ -316,9 +320,11 @@ function Alt_Med(props) {
   async function salvarAlteracao() {
 
       setSalvando(true);
+      
       await gerarLembretes();
 
       try {
+        medicamento.lembretes = lembretes
         const jsonValue = JSON.stringify(medicamento);
         await AsyncStorage.setItem(medicamento.id, jsonValue)
         console.log('Valor salvo com sucesso! - ' + medicamento.id.toString())
@@ -444,7 +450,7 @@ function Alt_Med(props) {
   return (
     <View style = {styles.conteiner}>
       <Header title = {'Alterar Medicamento'} iconEsq={'chevron-left'} colorEsq={'#cccccc'} onPressEsq={() => props.navigation.navigate('Detalhes',{key:medicamento.id})}
-                iconDir={'trash-can-outline'} colorDir={'#fe4545'} onPressDir={() => confirmExcluirRegistro()}/>
+                iconDir={'trash-can-outline'} colorDir={'#cccccc'} onPressDir={() => confirmExcluirRegistro()}/>
       
       <ScrollView keyboardDismissMode = 'on-drag'>
         <View  style = {{alignItems:'center',marginTop:5}}>
