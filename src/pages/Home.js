@@ -250,7 +250,7 @@ function Home(props) {
       } //Em caso de reativar ou 'desconcluir' um lembrete 
       else {
         // se a data do lembrente for maior que a data atual, cria uma nova notificação
-        if(dataLembreteAtual > new Date()) {
+        if(new Date(dataLembreteAtual) > new Date()) {
 
           const notificationId = await Notifications.scheduleNotificationAsync({
             content: {
@@ -520,6 +520,6 @@ async function registerForPushNotificationsAsync() {
     });
   }
   return token;
-}
+};
 
 export default Home
