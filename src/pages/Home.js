@@ -85,19 +85,21 @@ function Home(props) {
     setIsLoading(true);
 
       try {
+
         let keys = [];
         keys = await AsyncStorage.getAllKeys();
         console.log('Total de Chaves = '+ keys.length);
+
         let values;
         values = await AsyncStorage.multiGet(keys);
         console.log('Total de Dados = '+ values.length);
+        
         let sortMed = []
         for (let i=0; i<values.length; i++) {
           sortMed.push(JSON.parse(values[i][1]))
         };
-        sortMed.sort((a,b) => {
-          return a.nome - b.nome
-        });
+
+       sortMed = sortMed.sort((a,b) => a.nome - b.nome);
 
         let proxList = [];
         for(let i =0; i<sortMed.length; i++) {
@@ -351,7 +353,7 @@ function Home(props) {
       
       return (
         <View>
-          <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8D7DE':'#C8e8ef', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
+          <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
             activeOpacity={0.8}
             onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
             <MaterialCommunityIcons name={'chevron-down'} size={20} style = {{width:'5%', marginLeft:15}}/>
@@ -393,7 +395,7 @@ function Home(props) {
 
           return (
             <View>
-              <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8D7DE':'#C8e8ef', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
+              <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
                 activeOpacity={0.8}
                 onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
                   <MaterialCommunityIcons name={'chevron-right'} size={20} style = {{width:'5%', marginLeft:15}}/>
@@ -405,7 +407,7 @@ function Home(props) {
           );
         };
       };
-    };
+  };
   
   useEffect(() => { 
 
