@@ -34,7 +34,7 @@ function Alt_Med(props) {
 
   const medicamento = props.route.params.medicamento
 
-  const [lembretes,setLembretes] = useState([]);
+  const [lembretesUpdate,setLembretesUpdate] = useState([]);
 
   //Labels de apresentação nos campos de edição
   const [labelTempoTrat, setLabelTempoTrat] = useState(LABEL_TEMPO_TRATAMENTO); //Ex.: USar por 10 dias ou Usar por 5 semanas
@@ -119,6 +119,8 @@ function Alt_Med(props) {
 
   async function gerarLembretes() {
     let tempoTotal = 0;
+    var lembretes = medicamento.lembretes.filter(lembrete => lembrete.concluido == true);
+    console.log(lembretes)
 
     if(medicamento.duracao.tratamentoContinuo) {
       tempoTotal=1;
@@ -151,7 +153,7 @@ function Alt_Med(props) {
     };
 
     //Primeiro lembrete
-    let id = 1;
+    let id = lembretes.length+1;
     const dataLembrete = new Date(medicamento.dataInicio)
     
     if (medicamento.frequencia.horarios.length == 0) {
@@ -291,6 +293,8 @@ function Alt_Med(props) {
         };
       };
     };
+
+    return lembretes;
   };
 
   function alterarMedicamento() {
@@ -320,11 +324,9 @@ function Alt_Med(props) {
   async function salvarAlteracao() {
 
       setSalvando(true);
-      
-      await gerarLembretes();
 
       try {
-        medicamento.lembretes = lembretes
+        medicamento.lembretes = await gerarLembretes();
         const jsonValue = JSON.stringify(medicamento);
         await AsyncStorage.setItem(medicamento.id, jsonValue)
         console.log('Valor salvo com sucesso! - ' + medicamento.id.toString())
@@ -335,8 +337,7 @@ function Alt_Med(props) {
           "Erro ao Salvar",
           "Erro: " + e
         )
-      } 
-      console.log('Salvando o medicamento:\n'+JSON.stringify(medicamento));
+      }; 
       setSalvando(false);
       props.navigation.goBack()
     
@@ -546,12 +547,10 @@ function Alt_Med(props) {
         transparent={true}
         >
           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(256,256,256,0.5)'}}>
-            <View style={{alignItems:'center', justifyContent:'center',
-                        width:'50%', height:'20%', backgroundColor:'#eeeeee',
-                        alignSelf:'center', borderRadius:20, elevation:10, top:'30%', padding:10}}>
-              <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Alterando os dados do medicamento, aguarde...</Text>
+            <View style={{alignItems:'center', justifyContent:'center', backgroundColor:'#eeeeee', borderRadius:20, elevation:10, padding:10, width:'70%'}}>
+              <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Alterando os dados do medicamento, aguarde um momento...</Text>
               <View style={{alignItems:'center', justifyContent:'center'}}>
-                <LottieView style={{height:70, width:70}} source={require('../assets-comp/lottie/waiting.json')} autoPlay loop />
+                <LottieView style={{height:70, width:70, margin:5}} source={require('../assets-comp/lottie/waiting.json')} autoPlay loop />
               </View>
             </View>
           </View>

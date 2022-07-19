@@ -29,6 +29,7 @@ function Home(props) {
 
   //Dados lembretes medicamentos
   const [medicamentos,setMedicamentos] = useState([]);
+  const [lembretesList, setLembretesList] = useState([]);
   const [filtro,setFiltro] = useState('');
   const [loading, setIsLoading] = useState(false);
   const [menuDir,setMenuDir] = useState('normal');
@@ -98,7 +99,17 @@ function Home(props) {
           return a.nome - b.nome
         });
 
+        let proxList = [];
+        for(let i =0; i<sortMed.length; i++) {
+          for(let n = 0; n<sortMed[i].lembretes.length; n++) {
+            if (!sortMed[i].lembretes[n].concluido) {
+              proxList.push(sortMed[i].lembretes[n])
+            }
+          }
+        };
+
         setMedicamentos(sortMed);
+        setLembretesList(proxList);
   
       } catch (e) {
         //read key error
@@ -296,11 +307,11 @@ function Home(props) {
   };
 
   const SemLembrete = () => {
-      if (medicamentos.length == 0) {
+      if (lembretesList.length == 0 && selectedEsq) {
         return (
           <View style = {{alignItems:'center',justifyContent:'center', backgroundColor:'#222222', borderRadius:15, width:'90%',alignSelf:'center', top:10, elevation:5}}>
-            <Text style = {{padding:20,fontSize:30, color:'#dddddd', textAlign:'center'}}>Você não tem lembretes</Text>
-            <Text style = {{padding:20,fontSize:20, color:'#dddddd', textAlign:'center'}}>Aqui serão listados seus lembretes cadastrados!</Text>
+            <Text style = {{padding:20,fontSize:30, color:'#dddddd', textAlign:'center'}}>Você não tem lembretes!</Text>
+            <Text style = {{padding:20,fontSize:20, color:'#dddddd', textAlign:'center'}}>Aqui serão listados os próximos lembretes de uso de seus medicamentos cadastrados!</Text>
           </View>
           )
       } else {

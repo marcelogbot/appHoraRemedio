@@ -454,21 +454,19 @@ function Cad_Med(props) {
           
         </ScrollView>
         <Modal
-          visible={salvando}
-          animationType={'fade'}
-          transparent={true}
-          >
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(256,256,256,0.5)'}}>
-              <View style={{alignItems:'center', justifyContent:'center',
-                          width:'50%', height:'20%', backgroundColor:'#eeeeee',
-                          alignSelf:'center', borderRadius:20, elevation:10, top:'30%', padding:10}}>
-                <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Salvando os dados do medicamento, aguarde...</Text>
-                <View style={{alignItems:'center', justifyContent:'center'}}>
-                  <LottieView style={{height:70, width:70}} source={require('../assets-comp/lottie/waiting.json')} autoPlay loop />
-                </View>
+        visible={salvando}
+        animationType={'fade'}
+        transparent={true}
+        >
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(256,256,256,0.5)'}}>
+            <View style={{alignItems:'center', justifyContent:'center', backgroundColor:'#eeeeee', borderRadius:20, elevation:10, padding:10, width:'70%'}}>
+              <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center'}}>Salvando os dados do medicamento, aguarde um momento...</Text>
+              <View style={{alignItems:'center', justifyContent:'center'}}>
+                <LottieView style={{height:70, width:70, margin:5}} source={require('../assets-comp/lottie/waiting.json')} autoPlay loop />
               </View>
             </View>
-        </Modal>
+          </View>
+      </Modal>
 
         <TouchableOpacity
             activeOpacity={0.7}

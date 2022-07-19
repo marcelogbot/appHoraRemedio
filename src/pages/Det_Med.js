@@ -17,6 +17,7 @@ function Det_Med(props) {
   const [showModalEditAnotacao,setShowModalEditAnotacao] = useState(false);
   const [anotacaoUpdate, setAnotacaoUpdate] = useState('')
   const textInputAnotacaoRef = useRef(null)
+  const [continuo, setContinuo] = useState(false)
 
   const contextY = useSharedValue({y:0})
   const translateY = useSharedValue(0)
@@ -31,6 +32,7 @@ function Det_Med(props) {
           const parseJsonValue = JSON.parse(value);
           setMedicamento(parseJsonValue);
           setAnotacaoUpdate(parseJsonValue.anotacao)
+          setContinuo(parseJsonValue.duracao.tratamentoContinuo)
         };
   
       } catch (e) {
@@ -40,6 +42,25 @@ function Det_Med(props) {
           "Erro: " + e
         );
       };
+  };
+
+  const descontinuarTratamento = async () => {
+   
+    try {
+      medicamento.duracao.tratamentoContinuo = false;
+      setContinuo(false);
+      const jsonValue = JSON.stringify(medicamento);
+      await AsyncStorage.setItem(medicamento.id, jsonValue)
+      console.log('Medicamento descontinuado com sucesso! - ' + medicamento.id.toString())
+
+    } catch (e) {
+      // saving error
+      Alert.alert(
+        "Erro ao Salvar",
+        "Erro: " + e
+      )
+    } 
+    getItem();
   };
  
   const updateAnotacao = async () => {
@@ -190,6 +211,12 @@ function Det_Med(props) {
             onPress={() => mostraHistorico()}>
             <Text style={styles.buttonHistoricoText}>Ver histórico de lembretes</Text>
       </Pressable>
+
+      {continuo && <Pressable
+            style={[styles.buttonHistorico,{backgroundColor:'#875502'}]}
+            onPress={() => descontinuarTratamento()}>
+            <Text style={styles.buttonHistoricoText}>Descontinuar tratamento</Text>
+      </Pressable>}
 
       <GestureHandlerRootView style={{flex:1, justifyContent:'center', alignItems:'center'}}>
         <GestureDetector gesture={gesture}>
