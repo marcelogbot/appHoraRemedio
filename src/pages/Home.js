@@ -218,10 +218,9 @@ function Home(props) {
               novoId++
             };
           };
-          dadosMedAtualizado.lembretes = lembretesUpdate
 
         } //Caso já tenha o próximo lembrete já criado, cria só a notificação
-        else {
+        else if(lembretesUpdate.length > idLembreteAtual) {
 
           const dataProximoLembrete = new Date(lembretesUpdate[idLembreteAtual].dataLembrete)
           const notificationId = await Notifications.scheduleNotificationAsync({
@@ -237,12 +236,11 @@ function Home(props) {
                                               concluido:false,
                                               dataConcluido:'',
                                               idNotificacao:notificationId
-                                            };
-          
-          dadosMedAtualizado.lembretes = lembretesUpdate
-          
+                                            };          
         };
+
         //Prepara e atualiza registro no storage
+        dadosMedAtualizado.lembretes = lembretesUpdate
         const mergeStorage = JSON.stringify(dadosMedAtualizado)
         await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage)
         console.log('Lembrete Concluído com sucesso!')
@@ -278,9 +276,9 @@ function Home(props) {
                                                     idNotificacao: '',
                                                   };
         };
-        
-        dadosMedAtualizado.lembretes = lembretesUpdate
 
+        //Prepara e atualiza registro no storage
+        dadosMedAtualizado.lembretes = lembretesUpdate
         const mergeStorage = JSON.stringify(dadosMedAtualizado)
         await AsyncStorage.mergeItem(dadosMedAtualizado.id, mergeStorage )
         console.log('Lembrete desconcluido com sucesso!')
