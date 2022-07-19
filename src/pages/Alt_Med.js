@@ -309,7 +309,7 @@ function Alt_Med(props) {
 
       Alert.alert(
         "Atenção!",
-        "Essa alteração irá gerar novos lembretes e remover os lembretes anteriores, deseja continuar mesmo assim?",
+        "Essa alteração irá gerar novos lembretes e remover os lembretes ainda não concluídos, deseja continuar mesmo assim?",
         [{
           text: 'Cancelar',
           style:'cancel',

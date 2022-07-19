@@ -26,12 +26,12 @@ class RowAnimated extends Component {
       Animated.parallel([
         Animated.timing(this.animatedOpacity, {
           toValue: 1,
-          duration: 400,
+          duration: 250,
           useNativeDriver: true
         }),
         Animated.timing(this.animatedScale, {
           toValue: 1,
-          duration: 400,
+          duration: 250,
           useNativeDriver: true
         })
       ]).start();
