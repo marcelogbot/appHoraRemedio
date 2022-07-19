@@ -114,6 +114,7 @@ function Home(props) {
         setLembretesList(proxList);
   
       } catch (e) {
+        
         //read key error
         setIsLoading(false);
         Alert.alert(
