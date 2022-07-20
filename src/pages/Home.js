@@ -101,6 +101,8 @@ function Home(props) {
 
        sortMed = sortMed.sort((a,b) => a.nome - b.nome);
 
+       console.log(sortMed);
+
         let proxList = [];
         for(let i =0; i<sortMed.length; i++) {
           for(let n = 0; n<sortMed[i].lembretes.length; n++) {
@@ -354,14 +356,16 @@ function Home(props) {
       
       return (
         <View>
-          <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
-            activeOpacity={0.8}
-            onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
-            <MaterialCommunityIcons name={'chevron-down'} size={20} style = {{width:'5%', marginLeft:15}}/>
-            <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
-            <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
-            <MaterialCommunityIcons name={'information-variant'} size={26} style = {{width:'5%', marginLeft:15}} onPress={() => props.navigation.navigate('Detalhes',{key:medicamento.id})} />
-          </TouchableOpacity>
+          <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}
+                activeOpacity={0.8}
+                onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
+                  <MaterialCommunityIcons name={'chevron-down'} size={20} style = {{width:'10%', marginLeft:15}}/>
+                  <View style = {{width:'75%',flexDirection:'row'}}>
+                    <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold', textDecorationLine:lembretesProximos.length>0?'none':'line-through'}} >{medicamento.nome}</Text>
+                    <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
+                  </View>
+                  <MaterialCommunityIcons name={'information-variant'} size={26} style = {{width:'15%', marginLeft:15}} onPress={() => props.navigation.navigate('Detalhes',{key:medicamento.id})} />
+              </TouchableOpacity>
                 
           <FlatList
             style={{marginBottom:5}}
@@ -396,13 +400,15 @@ function Home(props) {
 
           return (
             <View>
-              <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center'}}
+              <TouchableOpacity  style = {{backgroundColor:lembretesProximos.length>0?'#C8e8ef':'#C8D7DE', marginBottom:3, elevation:6, flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}
                 activeOpacity={0.8}
                 onPress = {() => filtro == medicamento.id?setFiltro('') : setFiltro(medicamento.id)}>
-                  <MaterialCommunityIcons name={'chevron-right'} size={20} style = {{width:'5%', marginLeft:15}}/>
-                  <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold'}} >{medicamento.nome}</Text>
-                  <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
-                  <MaterialCommunityIcons name={'information-variant'} size={26} style = {{width:'5%', marginLeft:15}} onPress={() => props.navigation.navigate('Detalhes',{key:medicamento.id})} />
+                  <MaterialCommunityIcons name={'chevron-right'} size={20} style = {{width:'10%', marginLeft:15}}/>
+                  <View style = {{width:'75%',flexDirection:'row'}}>
+                    <Text numberOfLines={1} style = {{fontSize:18,marginLeft:0,padding:5,fontWeight:'bold', textDecorationLine:lembretesProximos.length>0?'none':'line-through'}} >{medicamento.nome}</Text>
+                    <Text numberOfLines={1} style = {{fontSize:16,marginLeft:0,padding:5,fontWeight:'bold'}} >({lembretesConcluidos.length})</Text>
+                  </View>
+                  <MaterialCommunityIcons name={'information-variant'} size={26} style = {{width:'15%', marginLeft:15}} onPress={() => props.navigation.navigate('Detalhes',{key:medicamento.id})} />
               </TouchableOpacity>
             </View>
           );
